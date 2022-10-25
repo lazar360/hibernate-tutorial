@@ -4,35 +4,47 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
+import com.luv2code.hibernate.demo.entity.Instructor;
+import com.luv2code.hibernate.demo.entity.InstructorDetail;
 import com.luv2code.hibernate.demo.entity.Student;
 
-public class CreateStudentDemo {
+public class DeleteDemo {
 
 	public static void main(String[] args) {
 
 		// create session factory
 		SessionFactory factory = new Configuration()
 								.configure("hibernate.cfg.xml")
-								.addAnnotatedClass(Student.class)
+								.addAnnotatedClass(Instructor.class)
+								.addAnnotatedClass(InstructorDetail.class)
 								.buildSessionFactory();
 		
 		// create session 
 		Session session = factory.getCurrentSession();
 		
 		try {
-			// create a student object
-			System.out.println("Creating new Student object...");
-			Student tempStudent = new Student ( "Paul", "Wall", "paul@luv2code.com");
 			
 			// start a transaction
 			session.beginTransaction(); 
 			
-			// save the student object
-			System.out.println("Saving the Student...");
-			session.save(tempStudent);
+			// getinstructor by primary key / id
+			int theId = 1;
+			Instructor tempInstructor =
+						session.get(Instructor.class, theId);
+			
+			System.out.println("Found instructor : "+tempInstructor);
+			
+			//delete the instructor
+			if(tempInstructor != null) {
+				System.out.println("Deleting : " + tempInstructor);
+			//Note we also delete associated "details"
+			
+				session.delete(tempInstructor);
+			}
 			
 			// commit transaction
 			session.getTransaction().commit();
+			
 			System.out.println("Done !");
 			
 		} finally {
